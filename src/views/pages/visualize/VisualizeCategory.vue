@@ -6,11 +6,11 @@ import { useToast } from 'primevue/usetoast';
 import axios from 'axios';
 const toast = useToast();
 
-const products = ref([]);
-const productDialog = ref(false);
+const categories = ref([]);
+const categoryDialog = ref(false);
 const deleteProductDialog = ref(false);
 const deleteProductsDialog = ref(false);
-const product = ref({});
+const category = ref({});
 const selectedProducts = ref(null);
 const dt = ref(null);
 const filters = ref({});
@@ -20,7 +20,6 @@ const statuses = ref([
     { label: 'INATIVO', value: 'inativo' }
 ]);
 let idCategory = '';
-// const productService = new ProductService();
 
 const getBadgeSeverity = (inventoryStatus) => {
     switch (inventoryStatus.toLowerCase()) {
@@ -39,7 +38,7 @@ onMounted(() => {
         .get('http://localhost:8000/categorias')
         .then((response) => {
             if (response.status === 200) {
-                products.value = response.data;
+                categories.value = response.data;
             }
         })
         .catch((error) => {
@@ -48,14 +47,8 @@ onMounted(() => {
         });
 });
 
-const openNew = () => {
-    product.value = {};
-    submitted.value = false;
-    productDialog.value = true;
-};
-
 const hideDialog = () => {
-    productDialog.value = false;
+    categoryDialog.value = false;
     submitted.value = false;
 };
 
@@ -70,6 +63,7 @@ const saveProduct = (category, status) => {
         .then((response) => {
             if (response.status === 200) {
                 toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
+                window.location.reload();
             }
         })
         .catch((error) => {
@@ -77,18 +71,18 @@ const saveProduct = (category, status) => {
             toast.add({ severity: 'error', summary: 'error', detail: message, life: 3000 });
         });
 
-    productDialog.value = false;
-    product.value = {};
+    categoryDialog.value = false;
+    category.value = {};
 };
 
 const editProduct = (editProduct) => {
     idCategory = editProduct;
-    product.value = { ...editProduct };
-    productDialog.value = true;
+    category.value = { ...editProduct };
+    categoryDialog.value = true;
 };
 
 const confirmDeleteProduct = (editProduct) => {
-    product.value = editProduct;
+    category.value = editProduct;
     idCategory = editProduct;
     deleteProductDialog.value = true;
 };
@@ -104,6 +98,7 @@ const deleteProduct = () => {
             if (response.status === 200) {
                 deleteProductDialog.value = false;
                 toast.add({ severity: 'success', summary: 'Categoria deletada', detail: 'Categoria deletado', life: 3000 });
+                window.location.reload();
             }
         })
         .catch((error) => {
@@ -112,35 +107,12 @@ const deleteProduct = () => {
         });
 };
 
-// const findIndexById = (id) => {
-//     let index = -1;
-//     for (let i = 0; i < products.value.length; i++) {
-//         if (products.value[i].id === id) {
-//             index = i;
-//             break;
-//         }
-//     }
-//     return index;
-// };
-
-// const createId = () => {
-//     let id = '';
-//     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-//     for (let i = 0; i < 5; i++) {
-//         id += chars.charAt(Math.floor(Math.random() * chars.length));
-//     }
-//     return id;
-// };
-
 const exportCSV = () => {
     dt.value.exportCSV();
 };
 
-const confirmDeleteSelected = () => {
-    deleteProductsDialog.value = true;
-};
 const deleteSelectedProducts = () => {
-    products.value = products.value.filter((val) => !selectedProducts.value.includes(val));
+    categories.value = categories.value.filter((val) => !selectedProducts.value.includes(val));
     deleteProductsDialog.value = false;
     selectedProducts.value = null;
     toast.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
@@ -166,7 +138,7 @@ const initFilters = () => {
 
                 <DataTable
                     ref="dt"
-                    :value="products"
+                    :value="categories"
                     v-model:selection="selectedProducts"
                     dataKey="id"
                     :paginator="true"
@@ -213,41 +185,41 @@ const initFilters = () => {
                     </Column>
                 </DataTable>
 
-                <Dialog v-model:visible="productDialog" :style="{ width: '450px' }" header="Editar Produto " :modal="true" class="p-fluid">
+                <Dialog v-model:visible="categoryDialog" :style="{ width: '450px' }" header="Editar Produto " :modal="true" class="p-fluid">
                     <div class="field">
                         <label for="category">Categoria</label>
-                        <InputText id="category" v-model.trim="product.name" required="true" autofocus :invalid="submitted && !product.name" />
-                        <small class="p-invalid" v-if="!product.name">Categoria é obrigatória</small>
+                        <InputText id="category" v-model.trim="category.name" required="true" autofocus :invalid="submitted && !category.name" />
+                        <small class="p-invalid" v-if="!category.name">Categoria é obrigatória</small>
                     </div>
                     <div class="field">
                         <label for="inventoryStatus" class="mb-3">Status</label>
-                        <Dropdown id="inventoryStatus" v-model="product.inventoryStatus" :options="statuses" optionLabel="label" placeholder="Selecione o status">
+                        <Dropdown id="inventoryStatus" v-model="category.inventoryStatus" :options="statuses" optionLabel="label" placeholder="Selecione o status">
                             <template #value="slotProps">
                                 <div v-if="slotProps.value && slotProps.value.value">
-                                    <span :class="'product-badge status-' + slotProps.value.value">{{ slotProps.value.label }}</span>
+                                    <span :class="'category-badge status-' + slotProps.value.value">{{ slotProps.value.label }}</span>
                                 </div>
                                 <div v-else-if="slotProps.value && !slotProps.value.value">
-                                    <span :class="'product-badge status-' + slotProps.value.toLowerCase()">{{ slotProps.value }}</span>
+                                    <span :class="'category-badge status-' + slotProps.value.toLowerCase()">{{ slotProps.value }}</span>
                                 </div>
                                 <span v-else>
                                     {{ slotProps.placeholder }}
                                 </span>
                             </template>
                         </Dropdown>
-                        <small class="p-invalid" v-if="!product.inventoryStatus">Status é obrigatório</small>
+                        <small class="p-invalid" v-if="!category.inventoryStatus">Status é obrigatório</small>
                     </div>
 
                     <template #footer>
                         <Button label="Cancel" icon="pi pi-times" text="" @click="hideDialog" />
-                        <Button label="Save" icon="pi pi-check" text="" @click="saveProduct(product.name, product.inventoryStatus.value)" />
+                        <Button label="Save" icon="pi pi-check" text="" @click="saveProduct(category.name, category.inventoryStatus.value)" />
                     </template>
                 </Dialog>
 
                 <Dialog v-model:visible="deleteProductDialog" :style="{ width: '450px' }" header="Confirmação" :modal="true">
                     <div class="flex align-items-center justify-content-center">
                         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-                        <span v-if="product"
-                            >Deseja desativar a categoria<b>{{ product.name }}</b
+                        <span v-if="category"
+                            >Deseja desativar a categoria<b>{{ category.name }}</b
                             >?</span
                         >
                     </div>
@@ -260,7 +232,7 @@ const initFilters = () => {
                 <Dialog v-model:visible="deleteProductsDialog" :style="{ width: '450px' }" header="Confirmação" :modal="true">
                     <div class="flex align-items-center justify-content-center">
                         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-                        <span v-if="product">Quer mesmo excluir as categorias selecionadas?</span>
+                        <span v-if="category">Quer mesmo excluir as categorias selecionadas?</span>
                     </div>
                     <template #footer>
                         <Button label="Não" icon="pi pi-times" text @click="deleteProductsDialog = false" />
