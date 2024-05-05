@@ -19,21 +19,17 @@ const statuses = ref([
     { label: 'ATIVO', value: 'ativo' },
     { label: 'INATIVO', value: 'inativo' }
 ]);
-let idDelete = '';
+let idCategory = '';
 // const productService = new ProductService();
 
-// const getBadgeSeverity = (inventoryStatus) => {
-//     switch (inventoryStatus.toLowerCase()) {
-//         case 'instock':
-//             return 'success';
-//         case 'lowstock':
-//             return 'warning';
-//         case 'outofstock':
-//             return 'danger';
-//         default:
-//             return 'info';
-//     }
-// };
+const getBadgeSeverity = (inventoryStatus) => {
+    switch (inventoryStatus.toLowerCase()) {
+        case 'ativo':
+            return 'success';
+        case 'inativo':
+            return 'danger';
+    }
+};
 
 onBeforeMount(() => {
     initFilters();
@@ -63,46 +59,47 @@ const hideDialog = () => {
     submitted.value = false;
 };
 
-const saveProduct = () => {
+const saveProduct = (category, status) => {
     submitted.value = true;
-    if (product.value.name && product.value.name.trim() && product.value.price) {
-        if (product.value.id) {
-            product.value.inventoryStatus = product.value.inventoryStatus.value ? product.value.inventoryStatus.value : product.value.inventoryStatus;
-            products.value[findIndexById(product.value.id)] = product.value;
-            toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
-        } else {
-            product.value.id = createId();
-            product.value.code = createId();
-            product.value.image = 'product-placeholder.svg';
-            product.value.inventoryStatus = product.value.inventoryStatus ? product.value.inventoryStatus.value : 'INSTOCK';
-            products.value.push(product.value);
-            toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Created', life: 3000 });
-        }
-        productDialog.value = false;
-        product.value = {};
-    }
+    console.log(submitted, 'dsadas');
+    const token = localStorage.getItem('authorization');
+    // Configurar o token no cabeçalho 'Authorization'
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    axios
+        .put(`http://localhost:8000/editar/categoria/${idCategory}`, { category, status })
+        .then((response) => {
+            if (response.status === 200) {
+                toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
+            }
+        })
+        .catch((error) => {
+            const message = error.response.data.message;
+            toast.add({ severity: 'error', summary: 'error', detail: message, life: 3000 });
+        });
+
+    productDialog.value = false;
+    product.value = {};
 };
 
 const editProduct = (editProduct) => {
+    idCategory = editProduct;
     product.value = { ...editProduct };
     productDialog.value = true;
 };
 
 const confirmDeleteProduct = (editProduct) => {
     product.value = editProduct;
-    idDelete = editProduct;
+    idCategory = editProduct;
     deleteProductDialog.value = true;
 };
 
 const deleteProduct = () => {
     /////aqui após confirmar
-    console.log(idDelete);
     const token = localStorage.getItem('authorization');
     // Configurar o token no cabeçalho 'Authorization'
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    console.log(token);
     axios
-        .delete(`http://localhost:8000/excluir/categoria/${idDelete}`)
+        .delete(`http://localhost:8000/excluir/categoria/${idCategory}`)
         .then((response) => {
             if (response.status === 200) {
                 deleteProductDialog.value = false;
@@ -115,25 +112,25 @@ const deleteProduct = () => {
         });
 };
 
-const findIndexById = (id) => {
-    let index = -1;
-    for (let i = 0; i < products.value.length; i++) {
-        if (products.value[i].id === id) {
-            index = i;
-            break;
-        }
-    }
-    return index;
-};
+// const findIndexById = (id) => {
+//     let index = -1;
+//     for (let i = 0; i < products.value.length; i++) {
+//         if (products.value[i].id === id) {
+//             index = i;
+//             break;
+//         }
+//     }
+//     return index;
+// };
 
-const createId = () => {
-    let id = '';
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for (let i = 0; i < 5; i++) {
-        id += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return id;
-};
+// const createId = () => {
+//     let id = '';
+//     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+//     for (let i = 0; i < 5; i++) {
+//         id += chars.charAt(Math.floor(Math.random() * chars.length));
+//     }
+//     return id;
+// };
 
 const exportCSV = () => {
     dt.value.exportCSV();
@@ -162,13 +159,6 @@ const initFilters = () => {
             <div class="card">
                 <Toolbar class="mb-4">
                     <template v-slot:start>
-                        <div class="my-2">
-                            <Button label="New" icon="pi pi-plus" class="mr-2" severity="success" @click="openNew" />
-                            <Button label="Delete" icon="pi pi-trash" severity="danger" @click="confirmDeleteSelected" :disabled="!selectedProducts || !selectedProducts.length" />
-                        </div>
-                    </template>
-
-                    <template v-slot:end>
                         <FileUpload mode="basic" accept="image/*" :maxFileSize="1000000" label="Import" chooseLabel="Import" class="mr-2 inline-block" />
                         <Button label="Export" icon="pi pi-upload" severity="help" @click="exportCSV($event)" />
                     </template>
@@ -196,7 +186,6 @@ const initFilters = () => {
                         </div>
                     </template>
 
-                    <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
                     <Column field="0" header="Código" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                         <template #body="slotProps">
                             <span class="p-column-title">Código</span>
@@ -212,7 +201,7 @@ const initFilters = () => {
                     <Column field="2" header="Status" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                         <template #body="slotProps">
                             <span class="p-column-title">Status</span>
-                            {{ slotProps.data[2] }}
+                            <Tag :severity="getBadgeSeverity(slotProps.data[2])">{{ slotProps.data[2] }}</Tag>
                         </template>
                     </Column>
 
@@ -228,7 +217,7 @@ const initFilters = () => {
                     <div class="field">
                         <label for="category">Categoria</label>
                         <InputText id="category" v-model.trim="product.name" required="true" autofocus :invalid="submitted && !product.name" />
-                        <small class="p-invalid" v-if="submitted && !product.name">Name is required.</small>
+                        <small class="p-invalid" v-if="!product.name">Categoria é obrigatória</small>
                     </div>
                     <div class="field">
                         <label for="inventoryStatus" class="mb-3">Status</label>
@@ -245,11 +234,12 @@ const initFilters = () => {
                                 </span>
                             </template>
                         </Dropdown>
+                        <small class="p-invalid" v-if="!product.inventoryStatus">Status é obrigatório</small>
                     </div>
 
                     <template #footer>
                         <Button label="Cancel" icon="pi pi-times" text="" @click="hideDialog" />
-                        <Button label="Save" icon="pi pi-check" text="" @click="saveProduct" />
+                        <Button label="Save" icon="pi pi-check" text="" @click="saveProduct(product.name, product.inventoryStatus.value)" />
                     </template>
                 </Dialog>
 
@@ -257,7 +247,7 @@ const initFilters = () => {
                     <div class="flex align-items-center justify-content-center">
                         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
                         <span v-if="product"
-                            >Deseja desativar a categoria<b>{{ product }}</b
+                            >Deseja desativar a categoria<b>{{ product.name }}</b
                             >?</span
                         >
                     </div>
