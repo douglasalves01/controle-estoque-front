@@ -10,11 +10,19 @@ const model = ref([
     },
     {
         label: 'Cadastro',
-        items: [{ label: 'Categoria', to: '/create/category' }, { label: 'Produto' }, { label: 'Fornecedor', to: '/create/supplier' }]
+        items: [
+            { label: 'Categoria', to: '/create/category' },
+            { label: 'Produto', to: '/create/product' },
+            { label: 'Fornecedor', to: '/create/supplier' }
+        ]
     },
     {
         label: 'Visualizar',
-        items: [{ label: 'Categoria', to: '/visualize/category' }, { label: 'Produto' }, { label: 'Fornecedor' }]
+        items: [{ label: 'Categoria', to: '/visualize/category' }, { label: 'Produto' }, { label: 'Fornecedor', to: '/visualize/supplier' }, { label: 'Vendas' }, { label: 'Estoque' }, { label: 'Movimentações' }]
+    },
+    {
+        label: 'Administrativo',
+        items: [{ label: 'Registrar usuário' }, { label: 'Controle de acesso' }]
     },
     {
         label: 'UI Components',
@@ -44,11 +52,6 @@ const model = ref([
         to: '/pages',
         items: [
             {
-                label: 'Landing',
-                icon: 'pi pi-fw pi-globe',
-                to: '/landing'
-            },
-            {
                 label: 'Auth',
                 icon: 'pi pi-fw pi-user',
                 items: [
@@ -74,11 +77,7 @@ const model = ref([
                 icon: 'pi pi-fw pi-pencil',
                 to: '/pages/crud'
             },
-            {
-                label: 'Timeline',
-                icon: 'pi pi-fw pi-calendar',
-                to: '/pages/timeline'
-            },
+
             {
                 label: 'Not Found',
                 icon: 'pi pi-fw pi-exclamation-circle',

@@ -25,6 +25,11 @@ const router = createRouter({
                     component: () => import('@/views/pages/register/RegisterCategory.vue')
                 },
                 {
+                    path: '/create/product',
+                    name: 'registerProduct',
+                    component: () => import('@/views/pages/register/RegisterProduct.vue')
+                },
+                {
                     path: '/create/supplier',
                     name: 'registerSupplier',
                     component: () => import('@/views/pages/register/RegisterSupplier.vue')
@@ -33,6 +38,11 @@ const router = createRouter({
                     path: '/visualize/category',
                     name: 'visualizeCategory',
                     component: () => import('@/views/pages/visualize/VisualizeCategory.vue')
+                },
+                {
+                    path: '/visualize/supplier',
+                    name: 'visualizeSupplier',
+                    component: () => import('@/views/pages/visualize/VisualizeSupplier.vue')
                 },
                 {
                     path: '/uikit/formlayout',
