@@ -22,7 +22,7 @@ const model = ref([
     },
     {
         label: 'Administrativo',
-        items: [{ label: 'Registrar usuário' }, { label: 'Controle de acesso' }]
+        items: [{ label: 'Registrar usuário' }, { label: 'Controle de acesso' }, { label: 'Configurações', to: '/config' }]
     },
     {
         label: 'UI Components',

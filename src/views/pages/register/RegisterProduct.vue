@@ -78,15 +78,15 @@ export default {
         <div class="col-12 md:col-6">
             <div class="card">
                 <form v-on:submit.prevent="handleSubmitForm()" action="" method="post">
-                    <h5>Cadastro de Fornecedor</h5>
+                    <h5>Cadastro de produto</h5>
                     <div class="formgroup-inline">
                         <div class="field">
-                            <label for="category" class="p-sr-only">Nome Fantasia</label>
-                            <InputText id="category" type="text" placeholder="Nome Fantasia" v-model="dados.nome_fantasia" />
+                            <label for="product" class="p-sr-only">Produto</label>
+                            <InputText id="product" type="text" placeholder="Produto" v-model="dados.produto" />
                         </div>
                         <div class="field">
-                            <label for="razao_social" class="p-sr-only">Razão Social</label>
-                            <InputText id="razao_social" type="text" placeholder="Razão Social" v-model="dados.razao_social" />
+                            <label for="price" class="p-sr-only">Valor</label>
+                            <InputText id="price" type="text" placeholder="Valor" v-model="dados.razao_social" />
                         </div>
                         <div class="field">
                             <label for="cnpj" class="p-sr-only">CNPJ</label>
