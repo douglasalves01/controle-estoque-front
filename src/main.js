@@ -225,14 +225,10 @@ router.beforeEach((to, from, next) => {
     if (to.meta.requiresAuth) {
         const token = localStorage.getItem('authorization');
         if (token) {
-            // Se houver um token, permite o acesso à rota protegida
             next();
         }
-        // Se não houver um token, redireciona para a página de login
-
         next({ name: 'login' });
     }
-    // Para rotas que não requerem autenticação, permite o acesso diretamente
     next();
 });
 app.mount('#app');

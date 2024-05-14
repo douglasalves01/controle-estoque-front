@@ -45,6 +45,21 @@ const router = createRouter({
                     component: () => import('@/views/pages/visualize/VisualizeSupplier.vue')
                 },
                 {
+                    path: '/visualize/product',
+                    name: 'visualizeProduct',
+                    component: () => import('@/views/pages/visualize/VisualizeProduct.vue')
+                },
+                {
+                    path: '/visualize/stock',
+                    name: 'visualizeStock',
+                    component: () => import('@/views/pages/visualize/VisualizeStock.vue')
+                },
+                {
+                    path: '/visualize/moviment',
+                    name: 'visualizeMoviment',
+                    component: () => import('@/views/pages/visualize/VisualizeMoviment.vue')
+                },
+                {
                     path: '/config',
                     name: 'config',
                     component: () => import('@/views/pages/configuration/Config.vue')

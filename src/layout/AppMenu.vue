@@ -18,7 +18,14 @@ const model = ref([
     },
     {
         label: 'Visualizar',
-        items: [{ label: 'Categoria', to: '/visualize/category' }, { label: 'Produto' }, { label: 'Fornecedor', to: '/visualize/supplier' }, { label: 'Vendas' }, { label: 'Estoque' }, { label: 'Movimentações' }]
+        items: [
+            { label: 'Categoria', to: '/visualize/category' },
+            { label: 'Produto', to: '/visualize/product' },
+            { label: 'Fornecedor', to: '/visualize/supplier' },
+            { label: 'Vendas' },
+            { label: 'Estoque', to: '/visualize/stock' },
+            { label: 'Movimentações', to: '/visualize/moviment' }
+        ]
     },
     {
         label: 'Administrativo',

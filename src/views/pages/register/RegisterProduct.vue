@@ -38,7 +38,13 @@ export default {
                 id_category: ''
             },
             statuses: [],
-            categories: []
+            categories: [],
+            configs: {
+                margem_lucro: '',
+                comissao_venda: '',
+                custo_fixo: '',
+                imposto_venda: ''
+            }
         };
     },
     methods: {
@@ -112,11 +118,39 @@ export default {
                 .catch((error) => {
                     console.error('Erro ao buscar categorias:', error);
                 });
+        },
+        fetchConfigs() {
+            const token = localStorage.getItem('authorization');
+            // Configurar o token no cabeçalho 'Authorization'
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            axios
+                .get('http://localhost:8000/configs')
+                .then((response) => {
+                    this.configs.margem_lucro = response.data[0][1];
+                    this.configs.comissao_venda = response.data[0][2];
+                    this.configs.custo_fixo = response.data[0][3];
+                    this.configs.imposto_venda = response.data[0][4];
+                    console.log(this.configs);
+                })
+                .catch((error) => {
+                    console.error('Erro ao buscar categorias:', error);
+                });
+        },
+        calculaPrecoVenda(custo_produto) {
+            let fatores = (this.configs.custo_fixo + this.configs.comissao_venda + this.configs.imposto_venda + this.configs.margem_lucro) / 100;
+            let preco_sugerido = (custo_produto / (1 - fatores)).toFixed(2);
+            addMessage('info', `Preço de venda sugerido de R$ ${preco_sugerido}`);
+        }
+    },
+    watch: {
+        'dados.unitCost': function (newVal) {
+            this.calculaPrecoVenda(newVal);
         }
     },
     mounted() {
         this.fetchSupplier();
         this.fetchCategory();
+        this.fetchConfigs();
     }
 };
 </script>
