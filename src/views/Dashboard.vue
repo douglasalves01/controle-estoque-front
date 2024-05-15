@@ -107,11 +107,6 @@ onMounted(async () => {
     qtdeSuppliers.value = await QtdeSuppliers();
     qtdeProducts.value = await QtdeProducts();
     productMinimum.value = await QtdeProductMinimum();
-    console.log(productMinimum);
-    console.log(qtdeSales, 'sales');
-    console.log(qtdeCategories, 'categories');
-    console.log(qtdeProducts, 'produtos');
-    console.log(qtdeSuppliers, 'suppliers');
 });
 
 const applyLightTheme = () => {
@@ -255,7 +250,7 @@ watch(
                 <ul class="p-0 mx-0 mt-0 mb-4 list-none" v-if="productMinimum.lenght !== 0">
                     <li v-for="(product, index) in productMinimum" :key="index" class="flex align-items-center py-2">
                         <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-orange-100 border-circle mr-3 flex-shrink-0">
-                            <i class="pi pi-download text-xl text-orange-500"></i>
+                            <i class="pi pi-exclamation-triangle text-xl text-orange-500"></i>
                         </div>
                         <div class="flex-grow-1">
                             <span class="text-gray-500 font-medium">O produto </span>
