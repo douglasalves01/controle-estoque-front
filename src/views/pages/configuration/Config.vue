@@ -29,8 +29,7 @@ export default {
             dados: {
                 margem_lucro: '',
                 comissao_venda: '',
-                custo_fixo: '',
-                imposto_venda: ''
+                custo_fixo: ''
             }
         };
     },
@@ -62,8 +61,6 @@ export default {
                     this.dados.margem_lucro = response.data[0][1].toString();
                     this.dados.comissao_venda = response.data[0][2].toString();
                     this.dados.custo_fixo = response.data[0][3].toString();
-                    this.dados.imposto_venda = response.data[0][4].toString();
-                    console.log(response.data[0]);
                 })
                 .catch((error) => {
                     console.error('Erro ao buscar configurações:', error);
@@ -95,10 +92,6 @@ export default {
                             <div class="field col-12 md:col-6">
                                 <label for="custo_fixo">Custo fixo</label>
                                 <InputText id="custo_fixo" type="text" v-model="dados.custo_fixo" />
-                            </div>
-                            <div class="field col-12 md:col-6">
-                                <label for="imposto_venda">Imposto sobre venda</label>
-                                <InputText id="imposto_venda" type="text" v-model="dados.imposto_venda" />
                             </div>
                         </div>
                         <Button label="Salvar" type="Submit"></Button>

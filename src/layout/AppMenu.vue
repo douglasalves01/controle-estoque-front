@@ -22,14 +22,18 @@ const model = ref([
             { label: 'Categoria', to: '/visualize/category' },
             { label: 'Produto', to: '/visualize/product' },
             { label: 'Fornecedor', to: '/visualize/supplier' },
-            { label: 'Vendas' },
+            { label: 'Vendas', to: '/visualize/sale' },
             { label: 'Estoque', to: '/visualize/stock' },
             { label: 'Movimentações', to: '/visualize/moviment' }
         ]
     },
     {
+        label: 'Financeiro',
+        items: [{ label: 'Lucro por venda', to: '/finance/sales' }]
+    },
+    {
         label: 'Administrativo',
-        items: [{ label: 'Registrar usuário' }, { label: 'Controle de acesso' }, { label: 'Configurações', to: '/config' }]
+        items: [{ label: 'Configurações', to: '/config' }]
     },
     {
         label: 'UI Components',

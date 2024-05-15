@@ -35,7 +35,9 @@ export default {
                 unitCost: '',
                 location: '',
                 id_supplier: '',
-                id_category: ''
+                id_category: '',
+                description: '',
+                icms: ''
             },
             statuses: [],
             categories: [],
@@ -48,15 +50,6 @@ export default {
         };
     },
     methods: {
-        addPhoneNumber() {
-            this.telefones.push('');
-        },
-        formatarTelefone(telefone) {
-            // Remova todos os caracteres não numéricos do telefone
-            const numeros = telefone.replace(/\D/g, '');
-            // Formatar o número como (XX) XXXXX-XXXX
-            return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7)}`;
-        },
         handleSubmitForm() {
             const token = localStorage.getItem('authorization');
             // Configurar o token no cabeçalho 'Authorization'
@@ -72,7 +65,9 @@ export default {
                     unitCost: this.dados.unitCost,
                     location: this.dados.location,
                     id_supplier: this.dados.id_supplier.value.toString(),
-                    id_category: this.dados.id_category.value.toString()
+                    id_category: this.dados.id_category.value.toString(),
+                    description: this.dados.description,
+                    icms: this.dados.icms
                 })
                 .then((response) => {
                     if (response.status === 200) {
@@ -129,22 +124,28 @@ export default {
                     this.configs.margem_lucro = response.data[0][1];
                     this.configs.comissao_venda = response.data[0][2];
                     this.configs.custo_fixo = response.data[0][3];
-                    this.configs.imposto_venda = response.data[0][4];
-                    console.log(this.configs);
                 })
                 .catch((error) => {
                     console.error('Erro ao buscar categorias:', error);
                 });
         },
-        calculaPrecoVenda(custo_produto) {
-            let fatores = (this.configs.custo_fixo + this.configs.comissao_venda + this.configs.imposto_venda + this.configs.margem_lucro) / 100;
+        calculaPrecoVenda(custo_produto, icms) {
+            let fatores = (this.configs.custo_fixo + this.configs.comissao_venda + icms + this.configs.margem_lucro) / 100;
             let preco_sugerido = (custo_produto / (1 - fatores)).toFixed(2);
+
             addMessage('info', `Preço de venda sugerido de R$ ${preco_sugerido}`);
         }
     },
     watch: {
-        'dados.unitCost': function (newVal) {
-            this.calculaPrecoVenda(newVal);
+        'dados.unitCost': function (custo_produto) {
+            let icms = parseFloat(this.dados.icms);
+            this.calculaPrecoVenda(custo_produto, icms);
+        },
+        'dados.icms': function (icms) {
+            let custo_produto = parseFloat(this.dados.unitCost);
+            if (!isNaN(custo_produto)) {
+                this.calculaPrecoVenda(custo_produto, parseFloat(icms));
+            }
         }
     },
     mounted() {
@@ -167,11 +168,19 @@ export default {
                         </div>
                         <div class="field">
                             <label for="price" class="p-sr-only">Valor</label>
-                            <InputText id="price" type="number" placeholder="Valor" v-model="dados.price" />
+                            <InputText id="price" type="number" step="0.01" placeholder="Valor" v-model="dados.price" />
+                        </div>
+                        <div class="field">
+                            <label for="description" class="p-sr-only">Descrição</label>
+                            <InputText id="description" type="text" placeholder="Descrição" v-model="dados.description" />
                         </div>
                         <div class="field">
                             <label for="unit_measure" class="p-sr-only">Unidade de medida</label>
                             <InputText id="unit_measure" type="text" placeholder="Unidade de medida" v-model="dados.unit_measure" />
+                        </div>
+                        <div class="field">
+                            <label for="icms" class="p-sr-only">ICMS</label>
+                            <InputText id="icms" type="number" step="0.01" placeholder="ICMS" v-model="dados.icms" />
                         </div>
                         <div class="field">
                             <Dropdown id="supplier" v-model="dados.id_supplier" :options="statuses" optionLabel="label" placeholder="Selecione um fornecedor">
@@ -217,8 +226,8 @@ export default {
                             <InputText id="minimun_stock" type="text" placeholder="Estoque mínimo" v-model="dados.minimumStock" />
                         </div>
                         <div class="field">
-                            <label for="unit_cost" class="p-sr-only">Custo médio</label>
-                            <InputText id="unit_cost" type="text" placeholder="Custo médio" v-model="dados.unitCost" />
+                            <label for="unit_cost" class="p-sr-only">Custo Atual</label>
+                            <InputText id="unit_cost" type="number" step="0.01" placeholder="Custo atual" v-model="dados.unitCost" />
                         </div>
                         <div class="field">
                             <label for="location" class="p-sr-only">Localização estoque</label>

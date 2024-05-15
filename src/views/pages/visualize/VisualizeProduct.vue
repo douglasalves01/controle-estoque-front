@@ -42,7 +42,6 @@ onMounted(() => {
         .then((response) => {
             if (response.status === 200) {
                 products.value = response.data;
-                console.log(products.value[0]);
             }
         })
         .catch((error) => {
@@ -62,7 +61,7 @@ const saveProduct = (product, price, unit_measure, status) => {
     // Configurar o token no cabeçalho 'Authorization'
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     axios
-        .put(`http://localhost:8000/editar/´produto/${idProduct}`, { product, status })
+        .put(`http://localhost:8000/editar/produto/${idProduct}`, { product, status })
         .then((response) => {
             if (response.status === 200) {
                 toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
@@ -179,6 +178,12 @@ const initFilters = () => {
                             R$ {{ slotProps.data[2].toFixed(2) }}
                         </template>
                     </Column>
+                    <Column field="1" header="Descrição" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+                        <template #body="slotProps">
+                            <span class="p-column-title">Descrição</span>
+                            {{ slotProps.data[7] }}
+                        </template>
+                    </Column>
                     <Column field="1" header="Unid medida" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                         <template #body="slotProps">
                             <span class="p-column-title">Unid medida</span>
@@ -195,6 +200,12 @@ const initFilters = () => {
                         <template #body="slotProps">
                             <span class="p-column-title">Categoria</span>
                             {{ slotProps.data[6] }}
+                        </template>
+                    </Column>
+                    <Column field="1" header="ICMS" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+                        <template #body="slotProps">
+                            <span class="p-column-title">ICMS</span>
+                            {{ slotProps.data[8] }}
                         </template>
                     </Column>
                     <Column field="2" header="Status" :sortable="true" headerStyle="width:14%; min-width:10rem;">

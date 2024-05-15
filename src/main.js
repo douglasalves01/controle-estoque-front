@@ -224,10 +224,9 @@ router.beforeEach((to, from, next) => {
     // Verifica se a rota requer autenticação
     if (to.meta.requiresAuth) {
         const token = localStorage.getItem('authorization');
-        if (token) {
-            next();
+        if (!token) {
+            next({ name: 'login' });
         }
-        next({ name: 'login' });
     }
     next();
 });
