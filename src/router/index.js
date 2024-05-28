@@ -70,6 +70,11 @@ const router = createRouter({
                     component: () => import('@/views/pages/finance/ProfitSales.vue')
                 },
                 {
+                    path: '/sales',
+                    name: 'Sale',
+                    component: () => import('@/views/pages/sale/Sale.vue')
+                },
+                {
                     path: '/config',
                     name: 'config',
                     component: () => import('@/views/pages/configuration/Config.vue')

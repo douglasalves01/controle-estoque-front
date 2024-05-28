@@ -66,7 +66,7 @@ export default {
                     location: this.dados.location,
                     id_supplier: this.dados.id_supplier.value.toString(),
                     id_category: this.dados.id_category.value.toString(),
-                    description: this.dados.description,
+                    description: this.dados.description.toUpperCase(),
                     icms: this.dados.icms
                 })
                 .then((response) => {
@@ -226,8 +226,8 @@ export default {
                             <InputText id="minimun_stock" type="text" placeholder="Estoque mínimo" v-model="dados.minimumStock" />
                         </div>
                         <div class="field">
-                            <label for="unit_cost" class="p-sr-only">Custo Atual</label>
-                            <InputText id="unit_cost" type="number" step="0.01" placeholder="Custo atual" v-model="dados.unitCost" />
+                            <label for="unit_cost" class="p-sr-only">Custo Unitário</label>
+                            <InputText id="unit_cost" type="number" step="0.01" placeholder="Custo unitário" v-model="dados.unitCost" />
                         </div>
                         <div class="field">
                             <label for="location" class="p-sr-only">Localização estoque</label>

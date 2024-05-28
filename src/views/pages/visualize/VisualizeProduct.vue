@@ -5,7 +5,8 @@ import { ref, onMounted, onBeforeMount } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import axios from 'axios';
 const toast = useToast();
-
+const suppliers = ref([]);
+const categories = ref([]);
 const products = ref([]);
 const productDialog = ref(false);
 const deleteProductDialog = ref(false);
@@ -30,6 +31,42 @@ const getBadgeSeverity = (inventoryStatus) => {
     }
 };
 
+const fetchSupplier = () => {
+    const token = localStorage.getItem('authorization');
+    // Configurar o token no cabeçalho 'Authorization'
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    axios
+        .get('http://localhost:8000/fornecedores-active')
+        .then((response) => {
+            // Mapeie os dados dos fornecedores para o formato necessário pelo Dropdown
+            suppliers.value = response.data.map((supplier) => ({
+                label: supplier[2],
+                value: supplier[0]
+            }));
+        })
+        .catch((error) => {
+            console.error('Erro ao buscar fornecedores:', error);
+        });
+};
+const fetchCategory = () => {
+    const token = localStorage.getItem('authorization');
+    // Configurar o token no cabeçalho 'Authorization'
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    axios
+        .get('http://localhost:8000/categorias-active')
+        .then((response) => {
+            // Mapeie os dados dos fornecedores para o formato necessário pelo Dropdown
+            categories.value = response.data.map((category) => ({
+                label: category[1],
+                value: category[0]
+            }));
+        })
+        .catch((error) => {
+            console.error('Erro ao buscar categorias:', error);
+        });
+};
+fetchSupplier();
+fetchCategory();
 onBeforeMount(() => {
     initFilters();
 });
@@ -55,13 +92,14 @@ const hideDialog = () => {
     submitted.value = false;
 };
 
-const saveProduct = (product, price, unit_measure, status) => {
+const saveProduct = (product, price, status, unit_measure, id_supplier, id_category, description) => {
     submitted.value = true;
+    product = 'asdasd';
     const token = localStorage.getItem('authorization');
     // Configurar o token no cabeçalho 'Authorization'
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     axios
-        .put(`http://localhost:8000/editar/produto/${idProduct}`, { product, status })
+        .put(`http://localhost:8000/editar/produto/${idProduct}`, { product, price, status, unit_measure, id_supplier, id_category, description })
         .then((response) => {
             if (response.status === 200) {
                 toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
@@ -235,9 +273,49 @@ const initFilters = () => {
                         <small class="p-invalid" v-if="!product.price">valor é obrigatório</small>
                     </div>
                     <div class="field">
+                        <label for="description">Descrição</label>
+                        <InputText id="description" v-model.trim="product.description" required="true" autofocus :invalid="submitted && !product.description" />
+                        <small class="p-invalid" v-if="!product.description">Descrição é obrigatória</small>
+                    </div>
+                    <div class="field">
                         <label for="unit_measure">Unidade medida</label>
                         <InputText id="unit_measure" v-model.trim="product.unit_measure" required="true" autofocus :invalid="submitted && !product.unit_measure" />
                         <small class="p-invalid" v-if="!product.unit_measure">Unidade de medida é obrigatória</small>
+                    </div>
+                    <div class="field">
+                        <Dropdown id="supplier" v-model="product.id_supplier" :options="suppliers" optionLabel="label" placeholder="Selecione um fornecedor">
+                            <template #value="suppliers">
+                                <div class="width-dropdown">
+                                    <!-- Adicione uma classe para o estilo específico do dropdown -->
+                                    <div v-if="suppliers.value && suppliers.value.label">
+                                        <span :class="'supplier-badge status-' + suppliers.value.value">{{ suppliers.value.label }}</span>
+                                    </div>
+                                    <div v-else-if="suppliers.value && !suppliers.value.value">
+                                        <span :class="'supplier-badge status-' + suppliers.value.value.toLowerCase()">{{ suppliers.value }}</span>
+                                    </div>
+                                    <span v-else>
+                                        {{ suppliers.placeholder }}
+                                    </span>
+                                </div>
+                            </template>
+                        </Dropdown>
+                    </div>
+                    <div class="field">
+                        <Dropdown id="category" v-model="product.id_category" :options="categories" optionLabel="label" placeholder="Selecione uma categoria">
+                            <template #value="categories">
+                                <div class="width-dropdown">
+                                    <div v-if="categories.value && categories.value.label">
+                                        <span :class="'supplier-badge status-' + categories.value.value">{{ categories.value.label }}</span>
+                                    </div>
+                                    <div v-else-if="categories.value && !categories.value.value">
+                                        <span :class="'supplier-badge status-' + categories.value.value.toLowerCase()">{{ categories.value }}</span>
+                                    </div>
+                                    <span v-else>
+                                        {{ categories.placeholder }}
+                                    </span>
+                                </div>
+                            </template>
+                        </Dropdown>
                     </div>
                     <div class="field">
                         <label for="inventoryStatus" class="mb-3">Status</label>
@@ -259,7 +337,12 @@ const initFilters = () => {
 
                     <template #footer>
                         <Button label="Cancel" icon="pi pi-times" text="" @click="hideDialog" />
-                        <Button label="Save" icon="pi pi-check" text="" @click="saveProduct(product.name, product.inventoryStatus.value)" />
+                        <Button
+                            label="Save"
+                            icon="pi pi-check"
+                            text=""
+                            @click="saveProduct(product.name, product.price, product.inventoryStatus.value, product.unit_measure, product.id_supplier.value, product.id_category.value, product.description)"
+                        />
                     </template>
                 </Dialog>
 

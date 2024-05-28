@@ -127,51 +127,33 @@ const initFilters = () => {
                             R$ {{ slotProps.data[1].toFixed(2) }}
                         </template>
                     </Column>
-                    <Column field="1" header="ICMS" :sortable="true" headerStyle="width:14%; min-width:10rem;">
-                        <template #body="slotProps">
-                            <span class="p-column-title">ICMS</span>
-                            {{ slotProps.data[3].toFixed(2) }}%
-                        </template>
-                    </Column>
 
-                    <Column field="1" header="Comissão venda" :sortable="true" headerStyle="width:14%; min-width:10rem;">
-                        <template #body="slotProps">
-                            <span class="p-column-title">Comissão venda</span>
-                            {{ slotProps.data[7].toFixed(2) }}%
-                        </template>
-                    </Column>
-                    <Column field="1" header="Custo fixo" :sortable="true" headerStyle="width:14%; min-width:10rem;">
-                        <template #body="slotProps">
-                            <span class="p-column-title">Custo fixo</span>
-                            {{ slotProps.data[8].toFixed(2) }}%
-                        </template>
-                    </Column>
                     <Column field="1" header="Custo total" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                         <template #body="slotProps">
                             <span class="p-column-title">Custo</span>
-                            R$ {{ slotProps.data[4].toFixed(2) }}
+                            R$ {{ slotProps.data[3].toFixed(2) }}
                         </template>
                     </Column>
                     <Column field="1" header="Lucro/Prejuízo" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                         <template #body="slotProps">
                             <span class="p-column-title">Lucro/Prejuízo</span>
-                            R$ {{ slotProps.data[5].toFixed(2) }}
+                            R$ {{ slotProps.data[4].toFixed(2) }}
                         </template>
                     </Column>
                     <Column field="2" header="Status" :sortable="true" headerStyle="width:14%; min-width:10rem;">
                         <template #body="slotProps">
                             <!--lucro dividido pelo valor total-->
                             <span class="p-column-title">Status</span>
-                            <p v-if="(slotProps.data[5] / slotProps.data[1]) * 100 > 20">
+                            <p v-if="(slotProps.data[4] / slotProps.data[1]) * 100 > 20">
                                 <Tag :severity="getBadgeSeverity('alto')">Lucro Alto</Tag>
                             </p>
-                            <p v-else-if="(slotProps.data[5] / slotProps.data[1]) * 100 > 10 && (slotProps.data[5] / slotProps.data[1]) * 100 < 20">
+                            <p v-else-if="(slotProps.data[4] / slotProps.data[1]) * 100 > 10 && (slotProps.data[4] / slotProps.data[1]) * 100 < 20">
                                 <Tag :severity="getBadgeSeverity('médio')">Lucro Médio</Tag>
                             </p>
-                            <p v-else-if="(slotProps.data[5] / slotProps.data[1]) * 100 > 0 && (slotProps.data[5] / slotProps.data[1]) * 100 <= 10">
+                            <p v-else-if="(slotProps.data[4] / slotProps.data[1]) * 100 > 0 && (slotProps.data[4] / slotProps.data[1]) * 100 <= 10">
                                 <Tag :severity="getBadgeSeverity('baixo')">Lucro Baixo</Tag>
                             </p>
-                            <p v-else-if="slotProps.data[5] === 0">
+                            <p v-else-if="slotProps.data[4] === 0">
                                 <Tag :severity="getBadgeSeverity('equilibrado')">Equilibrado</Tag>
                             </p>
                             <p v-else>
